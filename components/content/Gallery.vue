@@ -2,7 +2,7 @@
     <section id="galerie">
         <div class="gallery row">
             <div class="col-md-4" v-for="img in data" :key="img.src">
-                <img class="lazyload" :data-src="img.src">
+                <img class="lazyload" :data-src="img.src" :title="img.title">
             </div>
         </div>
     </section>
