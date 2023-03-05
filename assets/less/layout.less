@@ -1,0 +1,92 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+*:focus {
+    outline: none;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: @color-beige;
+    font-family: 'Fira Sans',sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1.35;
+    @media @w576 {
+        font-size: 20px;
+    }
+    @media @w768 {
+        font-size: 22px;
+    }
+}
+
+a {
+    color: @color-red;
+    text-decoration: none;
+    transition: .3s;
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+b,
+strong {
+    font-family: 'Fira Code',sans-serif;
+    font-weight: 400;
+    font-size: 1.1em;
+}
+
+button {
+    border: none;
+    background-color: transparent;
+    font-family: 'Fira Sans',sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.25;
+    @media @w576 {
+        font-size: 20px;
+    }
+    @media @w768 {
+        font-size: 22px;
+    }
+}
+
+h1 {
+    font-family: 'Fira Code',sans-serif;
+    font-weight: 400;
+    font-size: 2em;
+    line-height: 1.15;
+    margin-bottom: .6em;
+}
+
+h2 {
+    font-family: 'Fira Code',sans-serif;
+    font-weight: 400;
+    font-size: 1.4em;
+    line-height: 1.15;
+    margin-bottom: .5em;
+}
+
+img {
+    border: none;
+    max-width: 100%;
+    vertical-align: middle;
+}
+
+p {
+    margin-bottom: .6em;
+}
+
+section {
+    padding-top: 70px;
+    @media @w576 {
+        padding-top: 106px;
+    }
+}

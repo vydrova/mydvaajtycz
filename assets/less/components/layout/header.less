@@ -1,0 +1,95 @@
+header {
+    background-color: @color-beige;
+    box-shadow: 0 0 1rem rgb(0 0 0 / 10%);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    nav {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        padding: .5rem 1rem;
+        vertical-align: middle;
+        img {
+            @media @w576-max {
+                width: 60px;
+            }
+        }
+        .navbar-expand {
+            position: fixed;
+            padding-top: 120px;
+            top: 0;
+            background-color: @color-beige;
+            align-items: initial;
+            right: -100%;
+            height: 100%;
+            min-width: 40%;
+            transition: .6s;
+            //z-index: -1;
+            &.open {
+                right: 0;
+                overflow-y: auto;
+            }
+            ul {
+                //display: initial;
+                list-style: none;
+                padding-right: 25px;
+                padding-left: 38px;
+                li {
+                    border-bottom: 1px solid;
+                    font-size: 20px;
+                    line-height: 1.2;
+                    padding: 4.5px;
+                    padding-left: 0;
+                    a, span {
+                        color: black;
+                        display: block;
+                        padding: 15px 13.5px 7px ;
+                        padding-left: 0;
+                        text-decoration: none;
+                        .transition(.3s);
+                        &:hover,
+                        &.nuxt-link-exact-active {
+                            color: @color-red;
+                        }
+                        @media @w-layout-max {
+                            padding: 9.5px 25px;
+                        }
+                    }
+                }
+            }
+        }
+        .my-navbar-toggler {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            margin-left: auto;
+        }
+        .my-navbar-toggler {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+            padding: 10px;
+            padding-right: 0;
+            position: relative;
+            z-index: 2;
+            .navbar-title {
+                font-size: 20px;
+                padding-right: 10px;
+            }
+            .navbar-hamburger {
+                div {
+                    background-color: black;
+                    width: 22px;
+                    height: 2px;
+                }
+                div + div {
+                    margin-top: 6px;
+                }
+            }
+        }
+    }
+}

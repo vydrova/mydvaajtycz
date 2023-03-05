@@ -1,0 +1,52 @@
+@w576:~'(min-width: 576px)';
+@w768:~'(min-width: 768px)';
+@w992:~'(min-width: 992px)';
+@w1200:~'(min-width: 1200px)';
+@w-layout-max:~'(min-width: 1300px)';
+
+@w576-max:~'(max-width: 575.98px)';
+@w768-max:~'(max-width: 767.98px)';
+@w992-max:~'(max-width: 991.98px)';
+@w1200-max:~'(max-width: 1199.98px)';
+
+//COLORS
+@color-beige: #f8f4ef;
+@color-green: #a8c730;
+@color-light-green: #c2d86e;
+@color-grey: #b2b2b2;
+@color-light-brown: #938275;
+@color-red: #f34d3f;
+@color-orange: #e87121;
+//MIXINS
+.border-radius (@radius: 6px) {
+    border-radius: @radius;
+    -webkit-border-radius: @radius;
+    -moz-border-radius: @radius;
+}
+
+.box-shadow (@string: 0 0 4px #0000004d) {
+    -webkit-box-shadow: @string;
+    -moz-box-shadow: @string;
+    box-shadow: @string;
+}
+
+.transition (@transition) {
+    transition: @transition;
+	-webkit-transition: @transition;  
+	-moz-transition: @transition;
+	-ms-transition: @transition; 
+	-o-transition: @transition;  
+}
+
+.flex-with-all (@wrap, @align, @alignitems) {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: @wrap;
+    flex-wrap: @wrap;
+    justify-content: @align;
+    align-items: @alignitems;
+}
+
+.letter-spacing (@xdspacing) {
+    letter-spacing: calc((@xdspacing/1000)*1em);
+}
