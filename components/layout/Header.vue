@@ -31,6 +31,9 @@
                             <nuxt-link to="#jidlo-a-piti">Jídlo a pití</nuxt-link>
                         </li>
                         <li @click="open = false">
+                            <nuxt-link to="#harmonogram">Harmonogram</nuxt-link>
+                        </li>
+                        <li @click="open = false">
                             <nuxt-link to="#dary">Dary</nuxt-link>
                         </li>
                         <li @click="open = false">

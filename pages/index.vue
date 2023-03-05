@@ -7,6 +7,7 @@
         <Accomodation />
         <DressCode />
         <Food />
+        <Schedule />
         <Gifts />
         <Kids />
         <Gallery />
@@ -24,8 +25,9 @@ import Kids from '~/components/content/Kids.vue';
 import Food from '~/components/content/Food.vue';
 import Accomodation from '~/components/content/Accomodation.vue';
 import Gallery from '~/components/content/Gallery.vue';
+import Schedule from '~/components/content/Schedule.vue';
 
 export default {
-    components: { MainSlide, Intro, Place, Transport, DressCode, Gifts, Kids, Food, Accomodation, Gallery },
+    components: { MainSlide, Intro, Place, Transport, DressCode, Gifts, Kids, Food, Accomodation, Gallery, Schedule },
 }
 </script>
