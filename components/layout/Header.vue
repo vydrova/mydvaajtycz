@@ -2,7 +2,7 @@
     <header>
         <div class="container">
             <nav class="click-dropdown">
-                <NuxtLink to="/#" class="navbar-brand" title="Domů"><img src="/img/logo/mydvaajtyLogo.png" alt="Domů" width="90"></NuxtLink>
+                <NuxtLink to="/#" class="navbar-brand" title="Domů"><img src="/img/logo/mydvaajtyLogo.png" alt="Domů" width="80"></NuxtLink>
                 
                 <button class="my-navbar-toggler toggler-menu open-drop" ref="menuOpen" @click="open = !open" type="button" aria-label="Menu">
                     <div class="navbar-title">Menu</div>
