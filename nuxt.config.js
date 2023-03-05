@@ -27,6 +27,8 @@ export default {
     ]
   },
 
+  targer: 'static',
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '~/assets/less/main'
