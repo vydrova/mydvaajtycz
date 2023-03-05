@@ -1,9 +1,9 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'mydvaajtycz',
+    title: 'My dva aj ty(ý)',
     htmlAttrs: {
-      lang: 'en'
+      lang: 'cs'
     },
     meta: [
       { charset: 'utf-8' },
