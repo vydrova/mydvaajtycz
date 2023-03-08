@@ -15,28 +15,28 @@
                 
                 <div class="click-dropdown-content navbar-expand" ref="menuDropContent" :class="[open? 'open' : '']">
                     <ul>
-                        <li @click="open = false">
+                        <li @click="open = false; sentGtm('misto-a-cas')">
                             <nuxt-link to="#misto-a-cas">Místo a čas obřadu</nuxt-link>
                         </li>
-                        <li @click="open = false">
+                        <li @click="open = false; sentGtm('doprava')">
                             <nuxt-link to="#doprava">Doprava</nuxt-link>
                         </li>
-                        <li @click="open = false">
+                        <li @click="open = false; sentGtm('ubytovani')">
                             <nuxt-link to="#ubytovani">Ubytování</nuxt-link>
                         </li>
-                        <li @click="open = false">
+                        <li @click="open = false; sentGtm('co-na-sebe')">
                             <nuxt-link to="#co-na-sebe">Co na sebe</nuxt-link>
                         </li>
-                        <li @click="open = false">
+                        <li @click="open = false; sentGtm('jidlo-a-piti')">
                             <nuxt-link to="#jidlo-a-piti">Jídlo a pití</nuxt-link>
                         </li>
-                        <li @click="open = false">
+                        <li @click="open = false; sentGtm('harmonogram')">
                             <nuxt-link to="#harmonogram">Harmonogram</nuxt-link>
                         </li>
-                        <li @click="open = false">
+                        <li @click="open = false; sentGtm('dary')">
                             <nuxt-link to="#dary">Dary</nuxt-link>
                         </li>
-                        <li @click="open = false">
+                        <li @click="open = false; sentGtm('deti')">
                             <nuxt-link to="#deti">Děti</nuxt-link>
                         </li>
                     </ul>
@@ -53,6 +53,12 @@ export default {
     data() {
         return {
             open: false
+        }
+    },
+    methods: {
+        sentGtm(id) {
+            const eventData = {id: id}
+            this.$gtm.push({ event: 'clickMenuLink', eventData })
         }
     },
     mounted() {
