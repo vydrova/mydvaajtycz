@@ -65,7 +65,15 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/gtm',
   ],
+
+  gtm: {
+    id: 'GTM-NSRRDBR',
+    scriptDefer: true,
+    pageTracking: true,
+    enabled: true,
+  },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
