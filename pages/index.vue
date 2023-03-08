@@ -35,10 +35,18 @@ export default {
             const scrolledSections = []
             window.addEventListener("scroll", () => {
                 section.forEach((item, index) => {
-                    if (window.scrollY >= (item.offsetTop - window.innerHeight/3) && window.scrollY < section[index + 1].offsetTop && !scrolledSections.includes(item.id)) {
-                        const eventData = { id: item.id }
-                        this.$gtm.push({ event: 'scrollToSection', eventData })
-                        scrolledSections.push(item.id)
+                    if (index < section.length - 1) {
+                        if (window.scrollY >= (item.offsetTop - window.innerHeight/3) && window.scrollY < section[index + 1].offsetTop && !scrolledSections.includes(item.id)) {
+                            const eventData = { id: item.id }
+                            this.$gtm.push({ event: 'scrollToSection', eventData })
+                            scrolledSections.push(item.id)
+                        }
+                    } else {
+                        if (window.scrollY >= (item.offsetTop - window.innerHeight/3) && !scrolledSections.includes(item.id)) {
+                            const eventData = { id: item.id }
+                            this.$gtm.push({ event: 'scrollToSection', eventData })
+                            scrolledSections.push(item.id)
+                        }
                     }
                 })
             })
