@@ -29,5 +29,20 @@ import Schedule from '~/components/content/Schedule.vue';
 
 export default {
     components: { MainSlide, Intro, Place, Transport, DressCode, Gifts, Kids, Food, Accomodation, Gallery, Schedule },
+    mounted() {
+        if (process.browser) {
+            const section = document.querySelectorAll("section")
+            const scrolledSections = []
+            window.addEventListener("scroll", () => {
+                section.forEach((item, index) => {
+                    if (window.scrollY >= (item.offsetTop - window.innerHeight/3) && window.scrollY < section[index + 1].offsetTop && !scrolledSections.includes(item.id)) {
+                        const eventData = { id: item.id }
+                        this.$gtm.push({ event: 'scrollToSection', eventData })
+                        scrolledSections.push(item.id)
+                    }
+                })
+            })
+        }
+    }
 }
 </script>
