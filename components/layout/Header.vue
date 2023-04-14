@@ -42,6 +42,9 @@
                         <li @click="open = false; sentGtm('omezeni')">
                             <nuxt-link to="#omezeni">Omezení</nuxt-link>
                         </li>
+                        <li @click="open = false; sentGtm('ucast')">
+                            <nuxt-link to="#ucast">Účast</nuxt-link>
+                        </li>
                     </ul>
                 </div>
                 
