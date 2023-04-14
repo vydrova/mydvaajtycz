@@ -39,6 +39,9 @@
                         <li @click="open = false; sentGtm('deti')">
                             <nuxt-link to="#deti">Děti</nuxt-link>
                         </li>
+                        <li @click="open = false; sentGtm('omezeni')">
+                            <nuxt-link to="#omezeni">Omezení</nuxt-link>
+                        </li>
                     </ul>
                 </div>
                 

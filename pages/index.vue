@@ -10,6 +10,7 @@
         <Schedule />
         <Gifts />
         <Kids />
+        <Limitations />
         <Gallery />
     </main>
 </template>
@@ -26,9 +27,10 @@ import Food from '~/components/content/Food.vue';
 import Accomodation from '~/components/content/Accomodation.vue';
 import Gallery from '~/components/content/Gallery.vue';
 import Schedule from '~/components/content/Schedule.vue';
+import Limitations from '~/components/content/Limitations.vue';
 
 export default {
-    components: { MainSlide, Intro, Place, Transport, DressCode, Gifts, Kids, Food, Accomodation, Gallery, Schedule },
+    components: { MainSlide, Intro, Place, Transport, DressCode, Gifts, Kids, Food, Accomodation, Gallery, Schedule, Limitations },
     mounted() {
         if (process.browser) {
             const section = document.querySelectorAll("section")

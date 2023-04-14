@@ -1,0 +1,26 @@
+#harmonogram {
+  ul {
+    padding-left: 10px;
+    list-style: none;
+    li {
+      margin-bottom: 7px;
+      b {
+        margin-right: 10px;
+        &::after {
+          content: ' -';
+          font-family: 'Fira Sans',sans-serif;
+          margin-left: 10px;
+          font-size: 18px;
+          font-weight: 300;
+          line-height: 1.35;
+          @media @w576 {
+              font-size: 20px;
+          }
+          @media @w768 {
+              font-size: 22px;
+          }
+        }
+      }
+    }
+  }
+}
