@@ -1,0 +1,5 @@
+[[redirects]]
+  from = "/ucast"
+  to = "/#ucast"
+  status = 301
+  force = false
