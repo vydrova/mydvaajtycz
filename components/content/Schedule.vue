@@ -6,7 +6,7 @@
             <div>
                 <ul>
                     <li>
-                        <b>12:30</b> Příjezd
+                        <b>12:00</b> Příjezd
                     </li>
                     <li>
                         <b>13:00</b> Obřad
@@ -19,6 +19,9 @@
                     </li>
                     <li>
                         <b>16:30</b> První tanec novomanželů
+                    </li>
+                    <li>
+                        <b>17:00</b> Párové focení novomanželů
                     </li>
                     <li>
                         <b>18:00</b> Raut
