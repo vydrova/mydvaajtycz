@@ -1,5 +1,5 @@
 <template>
-    <main>
+    <main id="content">
         <MainSlide />
         <Intro />
         <Place />
