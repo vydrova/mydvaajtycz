@@ -7,12 +7,30 @@ on:
 jobs:
   fix-bug:
     runs-on: ubuntu-latest
+    env:
+      BRANCH_NAME: fix/${{ github.event.client_payload.linearIssueId }}
     
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_TOKEN }}
+          fetch-depth: 0  # Potřebujeme celou historii
+      
+      - name: Setup branch
+        run: |
+          git config --global user.name "AI Bug Fixer"
+          git config --global user.email "ai-bug-fixer@topol.io"
+          
+          # Zkontroluj jestli remote branch existuje
+          if git ls-remote --heads origin $BRANCH_NAME | grep -q $BRANCH_NAME; then
+            echo "Branch exists, checking out..."
+            git fetch origin $BRANCH_NAME
+            git checkout $BRANCH_NAME
+          else
+            echo "Creating new branch..."
+            git checkout -b $BRANCH_NAME
+          fi
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -36,33 +54,31 @@ jobs:
             Linear Issue ID: ${{ github.event.client_payload.linearIssueId }}
             
             Najdi příčinu tohoto bugu v kódu, oprav ho. Na nic se neptej, i kdybys měl dopňující otázky. 
-            Rozhodni se vždy sám. Následně vytvoř novou branch 
-            s názvem fix/${{ github.event.client_payload.linearIssueId }}, 
-            commitni změny.
+            Rozhodni se vždy sám. Udělej změny a commitni je.
+            NEVYTVÁŘEJ NOVOU BRANCH - už jsi na správné branch.
           "
       
-      - name: Git status
-        run: git status
-      
-      - name: Git log
-        run: git log
-
-      - name: Commit changes
+      - name: Push changes
         run: |
-          git config --global user.name "GitHub Release Bot"
-          git config --global user.email "<>"
-
-          git push origin fix/${{ github.event.client_payload.linearIssueId }}
+          git push origin $BRANCH_NAME
       
-      - name: Create Pull Request
+      - name: Create or update Pull Request
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          gh pr create \
-            --head fix/${{ github.event.client_payload.linearIssueId }} \
-            --base main \
-            --title "Fix: ${{ github.event.client_payload.title }}" \
-            --body "## 🤖 AI Bug Fix
+          # Zkontroluj jestli PR už existuje
+          EXISTING_PR=$(gh pr list --head $BRANCH_NAME --json number -q '.[0].number')
+          
+          if [ -n "$EXISTING_PR" ]; then
+            echo "PR #$EXISTING_PR already exists, updating..."
+            gh pr comment $EXISTING_PR --body "🤖 Přidány nové změny z Claude Code"
+          else
+            echo "Creating new PR..."
+            gh pr create \
+              --head $BRANCH_NAME \
+              --base master \
+              --title "Fix: ${{ github.event.client_payload.title }}" \
+              --body "## 🤖 AI Bug Fix
 
           **Linear Issue:** ${{ github.event.client_payload.linearIssueId }}
 
@@ -72,11 +88,13 @@ jobs:
           ---
 
           Tento PR byl automaticky vygenerován pomocí Claude Code."
+          fi
       
       - name: Request Copilot Review
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          PR_NUMBER=$(gh pr view --json number -q .number)
-          gh pr edit $PR_NUMBER --add-reviewer @me
-          # Copilot review se spustí automaticky pokud je povolený v repo settings
+          PR_NUMBER=$(gh pr list --head $BRANCH_NAME --json number -q '.[0].number')
+          if [ -n "$PR_NUMBER" ]; then
+            gh pr edit $PR_NUMBER --add-reviewer @me
+          fi
