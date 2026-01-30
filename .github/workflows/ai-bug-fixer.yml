@@ -59,6 +59,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           gh pr create \
+            --head fix/${{ github.event.client_payload.linearIssueId }} \
+            --base main \
             --title "Fix: ${{ github.event.client_payload.title }}" \
             --body "## 🤖 AI Bug Fix
 
@@ -69,11 +71,7 @@ jobs:
 
           ---
 
-          Tento PR byl automaticky vygenerován pomocí Claude Code.
-          
-          - [ ] Code review
-          - [ ] Funkční testování" \
-            --base main
+          Tento PR byl automaticky vygenerován pomocí Claude Code."
       
       - name: Request Copilot Review
         env:
