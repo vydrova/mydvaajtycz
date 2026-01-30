@@ -43,3 +43,10 @@ jobs:
       
       - name: Git log
         run: git log
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "GitHub Release Bot"
+          git config --global user.email "<>"
+
+          git push origin fix/${{ github.event.client_payload.linearIssueId }}
