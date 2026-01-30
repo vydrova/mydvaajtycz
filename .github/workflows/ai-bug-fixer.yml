@@ -37,18 +37,18 @@ jobs:
             
             Najdi příčinu tohoto bugu v kódu, oprav ho, vytvoř nový branch 
             s názvem fix/${{ github.event.client_payload.linearIssueId }}, 
-            commitni změny.
+            commitni změny pushnout a založit pull request.
           "
       
-      - name: Git status
-        run: git status
+      # - name: Git status
+      #   run: git status
       
-      - name: Git log
-        run: git log
+      # - name: Git log
+      #   run: git log
 
-      - name: Commit changes
-        run: |
-          git config --global user.name "GitHub Release Bot"
-          git config --global user.email "<>"
+      # - name: Commit changes
+      #   run: |
+      #     git config --global user.name "GitHub Release Bot"
+      #     git config --global user.email "<>"
 
-          git push origin fix/${{ github.event.client_payload.linearIssueId }}
+      #     git push origin fix/${{ github.event.client_payload.linearIssueId }}
