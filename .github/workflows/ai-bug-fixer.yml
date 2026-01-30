@@ -1,0 +1,39 @@
+name: AI Bug Fixer
+
+on:
+  repository_dispatch:
+    types: [linear-ai-fix]
+
+jobs:
+  fix-bug:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+      
+      - name: Run Claude Code
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          claude-code --print "
+            Bug report z Linear:
+            
+            Titulek: ${{ github.event.client_payload.title }}
+            
+            Popis: ${{ github.event.client_payload.description }}
+            
+            Linear Issue ID: ${{ github.event.client_payload.linearIssueId }}
+            
+            Najdi příčinu tohoto bugu v kódu, oprav ho, vytvoř nový branch 
+            s názvem fix/${{ github.event.client_payload.linearIssueId }}, 
+            commitni změny a vytvoř Pull Request.
+          "
