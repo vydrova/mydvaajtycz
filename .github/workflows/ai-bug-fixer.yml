@@ -37,18 +37,47 @@ jobs:
             
             Najdi příčinu tohoto bugu v kódu, oprav ho, vytvoř nový branch 
             s názvem fix/${{ github.event.client_payload.linearIssueId }}, 
-            commitni změny pushnout a založit pull request.
+            commitni změny.
           "
       
-      # - name: Git status
-      #   run: git status
+      - name: Git status
+        run: git status
       
-      # - name: Git log
-      #   run: git log
+      - name: Git log
+        run: git log
 
-      # - name: Commit changes
-      #   run: |
-      #     git config --global user.name "GitHub Release Bot"
-      #     git config --global user.email "<>"
+      - name: Commit changes
+        run: |
+          git config --global user.name "GitHub Release Bot"
+          git config --global user.email "<>"
 
-      #     git push origin fix/${{ github.event.client_payload.linearIssueId }}
+          git push origin fix/${{ github.event.client_payload.linearIssueId }}
+      
+      - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          gh pr create \
+            --title "Fix: ${{ github.event.client_payload.title }}" \
+            --body "## 🤖 AI Bug Fix
+
+          **Linear Issue:** ${{ github.event.client_payload.linearIssueId }}
+
+          **Popis problému:**
+          ${{ github.event.client_payload.description }}
+
+          ---
+
+          Tento PR byl automaticky vygenerován pomocí Claude Code.
+          
+          - [ ] Code review
+          - [ ] Funkční testování" \
+            --base main
+      
+      - name: Request Copilot Review
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr view --json number -q .number)
+          gh pr edit $PR_NUMBER --add-reviewer @me
+          # Copilot review se spustí automaticky pokud je povolený v repo settings
