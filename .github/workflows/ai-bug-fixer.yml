@@ -35,5 +35,11 @@ jobs:
             
             Najdi příčinu tohoto bugu v kódu, oprav ho, vytvoř nový branch 
             s názvem fix/${{ github.event.client_payload.linearIssueId }}, 
-            commitni změny a vytvoř Pull Request.
+            commitni změny.
           "
+      
+      - name: Git status
+        run: git status
+      
+      - name: Git log
+        run: git log
