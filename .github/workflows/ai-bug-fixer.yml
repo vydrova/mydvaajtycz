@@ -35,7 +35,8 @@ jobs:
             
             Linear Issue ID: ${{ github.event.client_payload.linearIssueId }}
             
-            Najdi příčinu tohoto bugu v kódu, oprav ho, vytvoř nový branch 
+            Najdi příčinu tohoto bugu v kódu, oprav ho. Na nic se neptej, i kdybys měl dopňující otázky. 
+            Rozhodni se vždy sám. Následně vytvoř novou branch 
             s názvem fix/${{ github.event.client_payload.linearIssueId }}, 
             commitni změny.
           "
