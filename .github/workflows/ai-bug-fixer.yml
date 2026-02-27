@@ -1,92 +1,181 @@
-name: AI Bug Fixer
+name: Claude AI Fix from Linear
 
 on:
   repository_dispatch:
     types: [linear-ai-fix]
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+env:
+  # GitHub username kolegy pro review — UPRAVTE
+  DEFAULT_REVIEWER: "vydrova"
+
 jobs:
-  fix-bug:
+  ai-fix:
     runs-on: ubuntu-latest
-    env:
-      BRANCH_NAME: fix/${{ github.event.client_payload.linearIssueId }}
-    
+    timeout-minutes: 30
+
     steps:
-      - name: Checkout
+      # 1. Parsování dat z vaší Lambdy
+      - name: Parse Linear task data
+        id: linear
+        run: |
+          echo "issue_id=${{ github.event.client_payload.linearIssueId }}" >> $GITHUB_OUTPUT
+          echo "title=${{ github.event.client_payload.title }}" >> $GITHUB_OUTPUT
+
+          cat <<'EOF' > /tmp/task_description.txt
+          ${{ github.event.client_payload.description }}
+          EOF
+
+          # Sanitize branch name
+          BRANCH_NAME="ai-fix/$(echo '${{ github.event.client_payload.title }}' | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/--*/-/g' | head -c 60)"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+      # 2. Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GH_TOKEN }}
-          fetch-depth: 0  
-      
-      - name: Setup branch
-        run: |
-          git config --global user.name "AI Bug Fixer"
-          git config --global user.email "ai-bug-fixer@topol.io"
-          
-          # Zkontroluj jestli remote branch existuje
-          if git ls-remote --heads origin $BRANCH_NAME | grep -q $BRANCH_NAME; then
-            echo "Branch exists, checking out..."
-            git fetch origin $BRANCH_NAME
-            git checkout $BRANCH_NAME
-          else
-            echo "Creating new branch..."
-            git checkout -b $BRANCH_NAME
-          fi
-      
+          fetch-depth: 0
+
+      # 3. Nová branch
+      - name: Create branch
+        run: git checkout -b "${{ steps.linear.outputs.branch_name }}"
+
+      # 4. Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      
+          node-version: "20"
+
+      # 5. Claude Code
       - name: Install Claude Code
         run: npm install -g @anthropic-ai/claude-code
-      
+
+      # 6. Spuštění Clauda
       - name: Run Claude Code
+        id: claude
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
         run: |
-          claude --dangerously-skip-permissions --print "
-            Bug report z Linear:
-            
-            Titulek: ${{ github.event.client_payload.title }}
-            
-            Popis: ${{ github.event.client_payload.description }}
-            
-            Linear Issue ID: ${{ github.event.client_payload.linearIssueId }}
-            
-            Najdi příčinu tohoto bugu v kódu, oprav ho. Na nic se neptej, i kdybys měl dopňující otázky. 
-            Rozhodni se vždy sám. Udělej změny a commitni je.
-            NEVYTVÁŘEJ NOVOU BRANCH - už jsi na správné branch.
-          "
-      
-      - name: Push changes
-        run: |
-          git push origin $BRANCH_NAME
-      
-      - name: Create or update Pull Request
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          # Zkontroluj jestli PR už existuje
-          EXISTING_PR=$(gh pr list --head $BRANCH_NAME --json number -q '.[0].number')
-          
-          if [ -n "$EXISTING_PR" ]; then
-            echo "PR #$EXISTING_PR already exists, updating..."
-            gh pr comment $EXISTING_PR --body "🤖 Přidány nové změny z Claude Code"
+          TASK_DESC=$(cat /tmp/task_description.txt)
+
+          claude -p "Vyřeš následující úkol z Linear issue ${{ steps.linear.outputs.issue_id }}:
+
+          ## Název
+          ${{ steps.linear.outputs.title }}
+
+          ## Popis
+          $TASK_DESC
+
+          ## Instrukce
+          1. Analyzuj problém a najdi relevantní soubory v projektu
+          2. Implementuj opravu nebo vylepšení
+          3. Ujisti se, že kód je správně naformátovaný
+          4. Pokud existují testy, spusť je
+          5. Pokud si nejsi jistý, přidej komentář // TODO: verify
+          6. Soustřeď se pouze na popsaný problém, neměň nic navíc" \
+            --allowedTools "Read,Write,Edit,Bash(npm run lint:*),Bash(npm run test:*),Bash(npm test),Bash(npx tsc --noEmit),Bash(git diff:*),Bash(git status),Bash(find:*),Bash(grep:*),Bash(cat:*)" \
+            --max-turns 30 \
+            --output-format text \
+            > /tmp/claude_output.txt 2>&1 || true
+
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
           else
-            echo "Creating new PR..."
-            gh pr create \
-              --head $BRANCH_NAME \
-              --base master \
-              --title "Fix: ${{ github.event.client_payload.title }}" \
-              --body "## 🤖 AI Bug Fix
-
-          **Linear Issue:** ${{ github.event.client_payload.linearIssueId }}
-
-          **Popis problému:**
-          ${{ github.event.client_payload.description }}
-
-          ---
-
-          Tento PR byl automaticky vygenerován pomocí Claude Code."
+            echo "has_changes=true" >> $GITHUB_OUTPUT
           fi
-      
+
+      # 7. Commit a push
+      - name: Commit and push
+        if: steps.claude.outputs.has_changes == 'true'
+        run: |
+          git config user.name "Claude AI Fix"
+          git config user.email "claude-ai-fix@noreply.github.com"
+          git add -A
+          git commit -m "ai-fix: ${{ steps.linear.outputs.title }}
+
+          Linear issue: ${{ steps.linear.outputs.issue_id }}
+          Automaticky vygenerováno Claude Code."
+          git push origin "${{ steps.linear.outputs.branch_name }}"
+
+      # 8. PR s labelem a reviewerem
+      - name: Create Pull Request
+        if: steps.claude.outputs.has_changes == 'true'
+        id: create_pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const claudeOutput = require('fs').readFileSync('/tmp/claude_output.txt', 'utf8').substring(0, 3000);
+
+            const pr = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[AI Fix] ${{ steps.linear.outputs.title }}`,
+              body: [
+                '## Automatická oprava z Linear issue',
+                '',
+                '**Linear issue ID:** `${{ steps.linear.outputs.issue_id }}`',
+                '',
+                '### Co Claude udělal',
+                '```',
+                claudeOutput,
+                '```',
+                '',
+                '---',
+                '⚠️ **Toto PR bylo vygenerováno automaticky.** Prosím pečlivě zkontrolujte změny.'
+              ].join('\n'),
+              head: '${{ steps.linear.outputs.branch_name }}',
+              base: 'main'
+            });
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.data.number,
+              labels: ['ai-fix', 'testing-preview']
+            });
+
+            try {
+              await github.rest.pulls.requestReviewers({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.data.number,
+                reviewers: ['${{ env.DEFAULT_REVIEWER }}']
+              });
+            } catch (e) {
+              console.log('Reviewer assignment failed:', e.message);
+            }
+
+            core.setOutput('pr_url', pr.data.html_url);
+
+      # 9. Komentář zpět do Linearu (volitelné)
+      - name: Comment on Linear task
+        if: always()
+        env:
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+        run: |
+          if [ -z "$LINEAR_API_KEY" ]; then
+            echo "LINEAR_API_KEY not set, skipping"
+            exit 0
+          fi
+
+          if [ "${{ steps.claude.outputs.has_changes }}" == "true" ]; then
+            MSG="🤖 **Claude AI Fix** vytvořil PR: ${{ steps.create_pr.outputs.pr_url }}\n\nČeká na code review."
+          else
+            OUTPUT=$(head -c 1500 /tmp/claude_output.txt | sed 's/"/\\"/g' | tr '\n' ' ')
+            MSG="⚠️ **Claude AI Fix** nedokázal provést změny.\n\n\`\`\`\n${OUTPUT}\n\`\`\`\n\nTask vyžaduje manuální řešení."
+          fi
+
+          curl -s -X POST https://api.linear.app/graphql \
+            -H "Content-Type: application/json" \
+            -H "Authorization: $LINEAR_API_KEY" \
+            -d "{
+              \"query\": \"mutation(\$id: String!, \$body: String!) { commentCreate(input: { issueId: \$id, body: \$body }) { success } }\",
+              \"variables\": {
+                \"id\": \"${{ steps.linear.outputs.issue_id }}\",
+                \"body\": \"$MSG\"
+              }
+            }"
