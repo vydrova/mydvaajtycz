@@ -33,6 +33,9 @@
                         <li @click="open = false; sentGtm('harmonogram')">
                             <nuxt-link to="#harmonogram">Harmonogram</nuxt-link>
                         </li>
+                        <li @click="open = false; sentGtm('fotografie')">
+                            <nuxt-link to="#fotografie">Fotografie a video</nuxt-link>
+                        </li>
                         <li @click="open = false; sentGtm('dary')">
                             <nuxt-link to="#dary">Dary</nuxt-link>
                         </li>

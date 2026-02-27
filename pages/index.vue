@@ -8,6 +8,7 @@
         <DressCode />
         <Food />
         <Schedule />
+        <Photography />
         <Gifts />
         <Kids />
         <Limitations />
@@ -28,11 +29,12 @@ import Food from '~/components/content/Food.vue';
 import Accomodation from '~/components/content/Accomodation.vue';
 import Gallery from '~/components/content/Gallery.vue';
 import Schedule from '~/components/content/Schedule.vue';
+import Photography from '~/components/content/Photography.vue';
 import Limitations from '~/components/content/Limitations.vue';
 import Participation from '~/components/content/Participation.vue';
 
 export default {
-    components: { MainSlide, Intro, Place, Transport, DressCode, Gifts, Kids, Food, Accomodation, Gallery, Schedule, Limitations, Participation },
+    components: { MainSlide, Intro, Place, Transport, DressCode, Gifts, Kids, Food, Accomodation, Gallery, Schedule, Photography, Limitations, Participation },
     mounted() {
         if (process.browser) {
             const section = document.querySelectorAll("section")
