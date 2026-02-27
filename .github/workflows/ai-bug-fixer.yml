@@ -99,7 +99,7 @@ jobs:
 
           Linear issue: ${{ steps.linear.outputs.issue_id }}
           Automaticky vygenerováno Claude Code."
-          git push origin "${{ steps.linear.outputs.branch_name }}"
+          git push --force-with-lease origin "${{ steps.linear.outputs.branch_name }}"
 
       # 8. PR s labelem a reviewerem
       - name: Create Pull Request
@@ -128,7 +128,7 @@ jobs:
                 '⚠️ **Toto PR bylo vygenerováno automaticky.** Prosím pečlivě zkontrolujte změny.'
               ].join('\n'),
               head: '${{ steps.linear.outputs.branch_name }}',
-              base: 'main'
+              base: 'master'
             });
 
             await github.rest.issues.addLabels({
